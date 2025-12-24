@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-white overflow-x-hidden;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+.glass-panel {
+  @apply bg-glass backdrop-blur-md border border-glassBorder rounded-xl shadow-xl;
+}
+
+.glass-input {
+  @apply bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-primary/50 text-white transition-all;
+}
+
+.glass-btn {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:shadow-emerald-500/20 hover:scale-105 transition-all active:scale-95;
+}
+
+/* Map specific override */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  z-index: 0;
+}
