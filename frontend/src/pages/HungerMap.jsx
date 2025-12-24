@@ -8,7 +8,27 @@ const HungerMap = () => {
       const [zones, setZones] = useState([]);
       const [loading, setLoading] = useState(true);
 
+      // DUMMY DATA FOR DEMO (INDIA FOCUS)
       useEffect(() => {
+            const dummyZones = [
+                  { _id: '1', areaName: 'Dharavi, Mumbai', coordinates: { lat: 19.0434, lng: 72.8567 }, hungerScore: 88, color: '#ef4444', priorityLevel: 'Critical', details: { childrenPct: 45, elderlyPct: 20, lastMealAvgHours: 18 } },
+                  { _id: '2', areaName: 'Seemapuri, Delhi', coordinates: { lat: 28.6904, lng: 77.3060 }, hungerScore: 92, color: '#ef4444', priorityLevel: 'Critical', details: { childrenPct: 52, elderlyPct: 15, lastMealAvgHours: 20 } },
+                  { _id: '3', areaName: 'Kolkata Slums', coordinates: { lat: 22.5726, lng: 88.3639 }, hungerScore: 78, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 38, elderlyPct: 25, lastMealAvgHours: 14 } },
+                  { _id: '4', areaName: 'Varanasi Ghats', coordinates: { lat: 25.3176, lng: 82.9739 }, hungerScore: 65, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 30, elderlyPct: 40, lastMealAvgHours: 12 } },
+                  { _id: '5', areaName: 'Bangalore Outskirts', coordinates: { lat: 12.9716, lng: 77.5946 }, hungerScore: 45, color: '#22c55e', priorityLevel: 'Stable', details: { childrenPct: 25, elderlyPct: 10, lastMealAvgHours: 8 } },
+                  { _id: '6', areaName: 'Hyderabad Old City', coordinates: { lat: 17.3616, lng: 78.4747 }, hungerScore: 72, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 41, elderlyPct: 22, lastMealAvgHours: 13 } },
+                  { _id: '7', areaName: 'Chennai North', coordinates: { lat: 13.0827, lng: 80.2707 }, hungerScore: 55, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 33, elderlyPct: 18, lastMealAvgHours: 10 } },
+                  { _id: '8', areaName: 'Jaipur Rural', coordinates: { lat: 26.9124, lng: 75.7873 }, hungerScore: 82, color: '#ef4444', priorityLevel: 'Critical', details: { childrenPct: 48, elderlyPct: 28, lastMealAvgHours: 16 } },
+                  { _id: '9', areaName: 'Patna Region', coordinates: { lat: 25.5941, lng: 85.1376 }, hungerScore: 85, color: '#ef4444', priorityLevel: 'Critical', details: { childrenPct: 50, elderlyPct: 12, lastMealAvgHours: 17 } },
+                  { _id: '10', areaName: 'Bhopal Lower Lake', coordinates: { lat: 23.2599, lng: 77.4126 }, hungerScore: 60, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 35, elderlyPct: 20, lastMealAvgHours: 11 } },
+                  { _id: '11', areaName: 'Jamshedpur Slums', coordinates: { lat: 22.8046, lng: 86.2029 }, hungerScore: 75, color: '#eab308', priorityLevel: 'Moderate', details: { childrenPct: 40, elderlyPct: 18, lastMealAvgHours: 14 } },
+            ];
+
+            setZones(dummyZones);
+            setLoading(false);
+
+            // Original API call commented out for demo
+            /*
             const fetchZones = async () => {
                   try {
                         const res = await axios.get('http://localhost:5000/api/hunger/zones');
@@ -20,6 +40,7 @@ const HungerMap = () => {
                   }
             };
             fetchZones();
+            */
       }, []);
 
       const center = [28.6139, 77.2090]; // Default to Delhi (mock center)

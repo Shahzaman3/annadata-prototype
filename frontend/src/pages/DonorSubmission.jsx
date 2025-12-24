@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
-import { FaUtensils, FaClock, FaThermometerHalf, FaCheckCircle, FaExclamationCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaUtensils, FaClock, FaThermometerHalf, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 const DonorSubmission = () => {
       const [formData, setFormData] = useState({
@@ -50,9 +50,7 @@ const DonorSubmission = () => {
                   <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-0"></div>
 
                   <div ref={formRef} className="relative z-10 w-full max-w-md glass-panel p-8 border-t border-emerald-500/30">
-                        <Link to="/" className="absolute top-6 left-6 text-slate-400 hover:text-white transition-colors">
-                              <FaArrowLeft className="text-xl" />
-                        </Link>
+
 
                         <div className="text-center mb-8">
                               <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-cyan-300">

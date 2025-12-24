@@ -74,7 +74,7 @@ const LandingPage = () => {
                                           </motion.button>
                                     </Link>
 
-                                    <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-mono">
+                                    <a href="https://github.com/Shahzaman3/annadata-prototype" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-mono">
                                           View Source Code
                                     </a>
                               </div>

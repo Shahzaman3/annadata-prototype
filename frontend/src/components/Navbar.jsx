@@ -16,14 +16,14 @@ const Navbar = () => {
       return (
             <nav className="fixed top-0 left-0 w-full z-50 p-4">
                   <div className="glass-panel mx-auto max-w-5xl px-6 py-3 flex justify-between items-center bg-black/40 backdrop-blur-xl">
-                        <div className="flex items-center gap-2">
+                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                               <div className="bg-emerald-500 p-2 rounded-lg text-white font-bold text-xl shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                                     A+
                               </div>
                               <span className="font-bold text-xl tracking-wide bg-gradient-to-r from-white to-emerald-400 bg-clip-text text-transparent">
                                     ANNADATA+
                               </span>
-                        </div>
+                        </Link>
 
                         <div className="flex gap-6">
                               {links.map((link) => {

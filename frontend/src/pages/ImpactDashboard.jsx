@@ -16,7 +16,24 @@ const AnimatedCounter = ({ value }) => {
 const ImpactDashboard = () => {
       const [stats, setStats] = useState({ totalMealsServed: 0, hungerReductionScore: 0 });
 
+      // DUMMY DATA FOR DEMO
       useEffect(() => {
+            // Hardcoded stats for demo purposes
+            setStats({
+                  totalMealsServed: 25430,
+                  hungerReductionScore: 72
+            });
+
+            // Simulate live updates for "wow" factor
+            const interval = setInterval(() => {
+                  setStats(prev => ({
+                        totalMealsServed: prev.totalMealsServed + Math.floor(Math.random() * 3),
+                        hungerReductionScore: prev.hungerReductionScore
+                  }));
+            }, 5000);
+
+            // Original API call commented out
+            /*
             const fetchStats = async () => {
                   try {
                         const res = await axios.get('http://localhost:5000/api/impact');
@@ -28,6 +45,7 @@ const ImpactDashboard = () => {
             fetchStats();
             // Poll for updates every 5s for demo effect
             const interval = setInterval(fetchStats, 5000);
+            */
             return () => clearInterval(interval);
       }, []);
 
