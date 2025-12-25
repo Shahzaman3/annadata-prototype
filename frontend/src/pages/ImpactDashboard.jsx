@@ -64,7 +64,7 @@ const ImpactDashboard = () => {
                         };
                         setFeed(prev => [newActivity, ...prev.slice(0, 4)]);
                   }
-            }, 3000);
+            }, 6000);
 
             return () => clearInterval(interval);
       }, []);
