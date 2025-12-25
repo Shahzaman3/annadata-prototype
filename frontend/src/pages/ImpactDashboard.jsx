@@ -64,7 +64,7 @@ const ImpactDashboard = () => {
                         <div className="glass-panel p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group">
                               <div className="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
                               <h3 className="text-xl text-emerald-300 mb-4 z-10 font-bold uppercase tracking-wider">Meals Served</h3>
-                              <div className="text-6xl md:text-8xl font-black text-white z-10 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                              <div className="text-5xl md:text-8xl font-black text-white z-10 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                                     <AnimatedCounter value={stats.totalMealsServed} />
                               </div>
                               <div className="mt-4 text-slate-400 h-16 w-full flex items-end justify-center gap-1">

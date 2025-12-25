@@ -50,7 +50,7 @@ const DonorSubmission = () => {
                   {/* Background Overlay */}
                   <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-0"></div>
 
-                  <div ref={formRef} className="relative z-10 w-full max-w-md glass-panel p-8 border-t border-emerald-500/30">
+                  <div ref={formRef} className="relative z-10 w-full max-w-md glass-panel p-5 md:p-8 border-t border-emerald-500/30">
 
 
                         <div className="text-center mb-8">

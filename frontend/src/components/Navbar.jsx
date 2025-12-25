@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaHeart, FaMapMarkedAlt, FaHandHoldingHeart, FaChartLine } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaHeart, FaMapMarkedAlt, FaHandHoldingHeart, FaChartLine, FaBars, FaTimes } from 'react-icons/fa';
+import { useState } from 'react';
 
 const Navbar = () => {
       const location = useLocation();
+      const [isOpen, setIsOpen] = useState(false);
 
       const links = [
             { path: '/donate', label: 'Donate', icon: <FaHeart /> },
@@ -15,8 +17,8 @@ const Navbar = () => {
 
       return (
             <nav className="fixed top-0 left-0 w-full z-50 p-4">
-                  <div className="glass-panel mx-auto max-w-5xl px-6 py-3 flex justify-between items-center bg-black/40 backdrop-blur-xl">
-                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                  <div className="glass-panel mx-auto max-w-7xl px-6 py-3 flex justify-between items-center bg-black/40 backdrop-blur-xl relative z-50">
+                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity" onClick={() => setIsOpen(false)}>
                               <div className="bg-emerald-500 p-2 rounded-lg text-white font-bold text-xl shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                                     A+
                               </div>
@@ -25,7 +27,8 @@ const Navbar = () => {
                               </span>
                         </Link>
 
-                        <div className="flex gap-6">
+                        {/* Desktop Menu */}
+                        <div className="hidden md:flex gap-6">
                               {links.map((link) => {
                                     const isActive = location.pathname === link.path;
                                     return (
@@ -44,7 +47,43 @@ const Navbar = () => {
                                     )
                               })}
                         </div>
+
+                        {/* Mobile Hamburger Button */}
+                        <button
+                              className="md:hidden text-white text-2xl focus:outline-none"
+                              onClick={() => setIsOpen(!isOpen)}
+                        >
+                              {isOpen ? <FaTimes /> : <FaBars />}
+                        </button>
                   </div>
+
+                  {/* Mobile Menu Overlay */}
+                  <AnimatePresence>
+                        {isOpen && (
+                              <motion.div
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    className="absolute top-20 left-4 right-4 bg-black/90 backdrop-blur-lg border border-white/10 rounded-2xl p-6 flex flex-col gap-4 md:hidden z-40 shadow-2xl"
+                              >
+                                    {links.map((link) => {
+                                          const isActive = location.pathname === link.path;
+                                          return (
+                                                <Link
+                                                      key={link.path}
+                                                      to={link.path}
+                                                      onClick={() => setIsOpen(false)}
+                                                      className={`flex items-center gap-4 p-3 rounded-lg transition-all ${isActive ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-300 hover:bg-white/5'
+                                                            }`}
+                                                >
+                                                      <span className="text-xl">{link.icon}</span>
+                                                      <span className="text-lg font-medium">{link.label}</span>
+                                                </Link>
+                                          )
+                                    })}
+                              </motion.div>
+                        )}
+                  </AnimatePresence>
             </nav>
       );
 };

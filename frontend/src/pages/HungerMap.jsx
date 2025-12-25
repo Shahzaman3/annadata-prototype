@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HungerMap = () => {
       const [zones, setZones] = useState([]);
@@ -46,32 +46,57 @@ const HungerMap = () => {
 
       const center = [28.6139, 77.2090]; // Default to Delhi (mock center)
 
-      return (
-            <div className="h-screen w-full relative pt-16">
-                  <div className="absolute top-20 left-4 z-[400] max-w-sm">
-                        <motion.div
-                              initial={{ x: -100, opacity: 0 }}
-                              animate={{ x: 0, opacity: 1 }}
-                              className="glass-panel p-4"
-                        >
-                              <h2 className="text-xl font-bold text-white mb-1">Hunger Priority Heatmap</h2>
-                              <p className="text-xs text-slate-400 mb-3">Live data from community partners.</p>
+      const [showPanel, setShowPanel] = useState(window.innerWidth > 768);
 
-                              <div className="flex flex-col gap-2 text-xs">
-                                    <div className="flex items-center gap-2">
-                                          <span className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_red]"></span>
-                                          <span className="text-slate-300">Critical Priority (&gt;80)</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                          <span className="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_8px_orange]"></span>
-                                          <span className="text-slate-300">Moderate Warning (50-80)</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                          <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_green]"></span>
-                                          <span className="text-slate-300">Stable (&lt;50)</span>
-                                    </div>
-                              </div>
-                        </motion.div>
+      return (
+            <div className="h-screen w-full relative pt-24">
+                  {/* Floating Info Panel */}
+                  <div className="absolute top-28 right-4 z-[400] w-[90%] md:max-w-sm flex flex-col items-end">
+                        <button
+                              onClick={() => setShowPanel(!showPanel)}
+                              className="md:hidden mb-2 bg-emerald-500 text-white p-2 rounded-full shadow-lg flex items-center gap-2 text-sm font-bold"
+                        >
+                              {showPanel ? 'Hide Info' : 'Show Map Info'}
+                        </button>
+
+                        <AnimatePresence>
+                              {showPanel && (
+                                    <motion.div
+                                          initial={{ x: 20, opacity: 0 }}
+                                          animate={{ x: 0, opacity: 1 }}
+                                          exit={{ x: 20, opacity: 0 }}
+                                          className="glass-panel p-4 w-full"
+                                    >
+                                          <div className="flex justify-between items-start">
+                                                <div>
+                                                      <h2 className="text-xl font-bold text-white mb-1">Hunger Priority Heatmap</h2>
+                                                      <p className="text-xs text-slate-400 mb-3">Live data from community partners.</p>
+                                                </div>
+                                                <button
+                                                      onClick={() => setShowPanel(false)}
+                                                      className="hidden md:block text-slate-400 hover:text-white"
+                                                >
+                                                      ✕
+                                                </button>
+                                          </div>
+
+                                          <div className="flex flex-col gap-2 text-xs">
+                                                <div className="flex items-center gap-2">
+                                                      <span className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_red]"></span>
+                                                      <span className="text-slate-300">Critical Priority (&gt;80)</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                      <span className="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_8px_orange]"></span>
+                                                      <span className="text-slate-300">Moderate Warning (50-80)</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                      <span className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_green]"></span>
+                                                      <span className="text-slate-300">Stable (&lt;50)</span>
+                                                </div>
+                                          </div>
+                                    </motion.div>
+                              )}
+                        </AnimatePresence>
                   </div>
 
                   <MapContainer center={center} zoom={11} scrollWheelZoom={true} className="w-full h-full">
@@ -101,9 +126,9 @@ const HungerMap = () => {
                                           </div>
                                     </Tooltip>
                                     <Popup>
-                                          <div className="glass-panel text-white p-2 min-w-[200px] border-none">
-                                                <h3 className="font-bold text-lg mb-2 border-b border-white/20 pb-1">{zone.areaName}</h3>
-                                                <div className="space-y-1 text-sm">
+                                          <div className="p-2 min-w-[200px] text-slate-800">
+                                                <h3 className="font-bold text-lg mb-2 border-b border-slate-200 pb-1">{zone.areaName}</h3>
+                                                <div className="space-y-1 text-sm font-medium">
                                                       <p className="flex justify-between"><span>Priority:</span> <span style={{ color: zone.color }}>{zone.priorityLevel}</span></p>
                                                       <p className="flex justify-between"><span>Children:</span> <span>{zone.details.childrenPct}%</span></p>
                                                       <p className="flex justify-between"><span>Elderly:</span> <span>{zone.details.elderlyPct}%</span></p>

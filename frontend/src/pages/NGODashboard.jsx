@@ -50,11 +50,11 @@ const NGODashboard = () => {
                                           initial={{ opacity: 0, scale: 0.9 }}
                                           animate={{ opacity: 1, scale: 1 }}
                                           exit={{ opacity: 0, x: 200 }}
-                                          className="glass-panel p-6 flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-emerald-500/30 transition-colors"
+                                          className="glass-panel p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group hover:border-emerald-500/30 transition-colors"
                                     >
                                           {/* Left Side: Indicator & Details */}
-                                          <div className="flex items-center gap-6 flex-1">
-                                                <div className={`w-2 self-stretch rounded-full ${req.urgencyScore > 80 ? 'bg-red-500 shadow-[0_0_10px_red]' :
+                                          <div className="flex items-start md:items-center gap-4 md:gap-6 flex-1 w-full">
+                                                <div className={`w-2 md:w-2 min-h-[80px] md:min-h-0 self-stretch rounded-full ${req.urgencyScore > 80 ? 'bg-red-500 shadow-[0_0_10px_red]' :
                                                       req.urgencyScore > 50 ? 'bg-yellow-500 shadow-[0_0_10px_orange]' : 'bg-green-500'
                                                       }`}></div>
 
@@ -74,9 +74,9 @@ const NGODashboard = () => {
                                           </div>
 
                                           {/* Right Side: Action */}
-                                          <div className="flex items-center gap-6">
-                                                <div className="text-right hidden md:block">
-                                                      <div className="text-2xl font-bold text-white">{req.distanceKm} km</div>
+                                          <div className="flex flex-row md:flex-row items-center justify-between w-full md:w-auto gap-4 md:gap-6 mt-4 md:mt-0">
+                                                <div className="text-right md:block flex-1 md:flex-none order-2 md:order-1">
+                                                      <div className="text-xl md:text-2xl font-bold text-white">{req.distanceKm} km</div>
                                                       <div className="text-xs text-slate-500">Distance</div>
                                                 </div>
 
@@ -84,9 +84,9 @@ const NGODashboard = () => {
                                                       whileHover={{ scale: 1.05 }}
                                                       whileTap={{ scale: 0.95 }}
                                                       onClick={() => handleAccept(req._id)}
-                                                      className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg flex items-center gap-2"
+                                                      className="flex-1 md:flex-none order-1 md:order-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 md:px-8 rounded-lg shadow-lg flex items-center justify-center gap-2"
                                                 >
-                                                      <FaTruck /> Accept Pickup
+                                                      <FaTruck /> <span className="md:inline">Accept</span>
                                                 </motion.button>
                                           </div>
                                     </motion.div>

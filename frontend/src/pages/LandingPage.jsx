@@ -48,7 +48,7 @@ const LandingPage = () => {
                                     Annadata+ Hackathon Prototype
                               </motion.div>
 
-                              <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-tight">
+                              <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-tight">
                                     <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-500 pb-2">
                                           Bridging Surplus
                                     </span>
@@ -57,7 +57,7 @@ const LandingPage = () => {
                                     </span>
                               </h1>
 
-                              <p className="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+                              <p className="text-lg md:text-2xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
                                     A real-time food redistribution network powered by geolocation and hunger mapping data.
                               </p>
 
