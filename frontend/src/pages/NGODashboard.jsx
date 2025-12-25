@@ -9,7 +9,8 @@ const NGODashboard = () => {
       useEffect(() => {
             const fetchRequests = async () => {
                   try {
-                        const res = await axios.get('http://localhost:5000/api/ngo/requests');
+                        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                        const res = await axios.get(`${API_URL}/api/ngo/requests`);
                         setRequests(res.data);
                   } catch (err) {
                         console.error("Failed to load requests", err);
@@ -20,7 +21,8 @@ const NGODashboard = () => {
 
       const handleAccept = async (id) => {
             try {
-                  await axios.post('http://localhost:5000/api/ngo/accept', { requestId: id });
+                  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                  await axios.post(`${API_URL}/api/ngo/accept`, { requestId: id });
                   setRequests(prev => prev.filter(r => r._id !== id));
             } catch (err) {
                   alert('Failed to accept pickup');
@@ -53,7 +55,7 @@ const NGODashboard = () => {
                                           {/* Left Side: Indicator & Details */}
                                           <div className="flex items-center gap-6 flex-1">
                                                 <div className={`w-2 self-stretch rounded-full ${req.urgencyScore > 80 ? 'bg-red-500 shadow-[0_0_10px_red]' :
-                                                            req.urgencyScore > 50 ? 'bg-yellow-500 shadow-[0_0_10px_orange]' : 'bg-green-500'
+                                                      req.urgencyScore > 50 ? 'bg-yellow-500 shadow-[0_0_10px_orange]' : 'bg-green-500'
                                                       }`}></div>
 
                                                 <div>

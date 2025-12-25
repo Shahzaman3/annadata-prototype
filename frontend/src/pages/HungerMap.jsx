@@ -31,7 +31,8 @@ const HungerMap = () => {
             /*
             const fetchZones = async () => {
                   try {
-                        const res = await axios.get('http://localhost:5000/api/hunger/zones');
+                        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                        const res = await axios.get(`${API_URL}/api/hunger/zones`);
                         setZones(res.data);
                         setLoading(false);
                   } catch (err) {
