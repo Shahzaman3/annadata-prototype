@@ -23,6 +23,7 @@ app.use('/api/food', foodRoutes);
 app.use('/api/hunger', hungerRoutes);
 app.use('/api/ngo', ngoRoutes);
 app.use('/api/impact', impactRoutes);
+app.use('/api/user', require('./routes/userRoutes'));
 
 // Database Connection
 mongoose.connect(MONGO_URI)

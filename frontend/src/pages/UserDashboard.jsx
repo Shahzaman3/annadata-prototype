@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
-import { 
-      FaUserCircle, FaUtensils, FaLeaf, FaMedal, 
-      FaHistory, FaArrowRight, FaClock, FaCheckCircle, 
+import {
+      FaUserCircle, FaUtensils, FaLeaf, FaMedal,
+      FaHistory, FaArrowRight, FaClock, FaCheckCircle,
       FaTruck
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -10,17 +11,15 @@ import { Link } from 'react-router-dom';
 const StatCard = ({ icon, label, value, subtext, color }) => (
       <motion.div
             whileHover={{ y: -5 }}
-            className={`p-5 rounded-2xl border bg-black/20 backdrop-blur-md flex flex-col items-center text-center gap-2 ${
-                  color === 'emerald' ? 'border-emerald-500/30 text-emerald-400' : 
+            className={`p-5 rounded-2xl border bg-black/20 backdrop-blur-md flex flex-col items-center text-center gap-2 ${color === 'emerald' ? 'border-emerald-500/30 text-emerald-400' :
                   color === 'blue' ? 'border-blue-500/30 text-blue-400' :
-                  'border-amber-500/30 text-amber-400'
-            }`}
+                        'border-amber-500/30 text-amber-400'
+                  }`}
       >
-            <div className={`text-3xl mb-1 ${
-                  color === 'emerald' ? 'drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]' :
+            <div className={`text-3xl mb-1 ${color === 'emerald' ? 'drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]' :
                   color === 'blue' ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]' :
-                  'drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]'
-            }`}>
+                        'drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                  }`}>
                   {icon}
             </div>
             <div className="text-3xl font-bold text-white tracking-tight">{value}</div>
@@ -35,7 +34,7 @@ const ActivityItem = ({ type, quantity, time, status }) => {
             'Picked Up': 'text-blue-400 bg-blue-400/10 border-blue-400/20',
             'Delivered': 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
       };
-      
+
       const statusIcons = {
             'Pending': <FaClock />,
             'Picked Up': <FaTruck />,
@@ -43,7 +42,7 @@ const ActivityItem = ({ type, quantity, time, status }) => {
       };
 
       return (
-            <motion.div 
+            <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
@@ -66,23 +65,37 @@ const ActivityItem = ({ type, quantity, time, status }) => {
 };
 
 const UserDashboard = () => {
-      // Mock User Data
-      const user = {
-            name: "Shahzaman Faisal",
-            email: "shahzaman@example.com",
-            level: "Gold Donor",
-            totalMeals: 142,
-            co2Saved: "58kg",
-            points: 1250
-      };
+      const [user, setUser] = useState(null);
+      const [activities, setActivities] = useState([]);
+      const [loading, setLoading] = useState(true);
 
-      // Mock Activity Data
-      const [activities, setActivities] = useState([
-            { id: 1, type: 'Cooked Meal', quantity: '5kg (Rice & Curry)', time: '2 hours ago', status: 'Pending' },
-            { id: 2, type: 'Raw Ingredients', quantity: '12kg (Vegetables)', time: 'Yesterday', status: 'Delivered' },
-            { id: 3, type: 'Cooked Meal', quantity: '3kg (Breads)', time: '3 days ago', status: 'Delivered' },
-            { id: 4, type: 'Packaged Goods', quantity: '10 Boxes', time: '1 week ago', status: 'Delivered' },
-      ]);
+      useEffect(() => {
+            const fetchDashboardData = async () => {
+                  try {
+                        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                        const res = await axios.get(`${API_URL}/api/user/dashboard`);
+                        if (res.data.success) {
+                              setUser(res.data.user);
+                              setActivities(res.data.activities);
+                        }
+                  } catch (error) {
+                        console.error("Error fetching dashboard data:", error);
+                  } finally {
+                        setLoading(false);
+                  }
+            };
+            fetchDashboardData();
+      }, []);
+
+      if (loading) {
+            return (
+                  <div className="min-h-screen pt-32 flex items-center justify-center bg-slate-900 text-emerald-500">
+                        <div className="animate-spin text-4xl"><FaHistory /></div>
+                  </div>
+            );
+      }
+
+      if (!user) return null; // Or error state
 
       return (
             <div className="min-h-screen pt-28 px-4 pb-12 bg-slate-900 bg-[url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center">
@@ -105,7 +118,7 @@ const UserDashboard = () => {
                                           </div>
                                     </div>
                               </div>
-                              <Link 
+                              <Link
                                     to="/donate"
                                     className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
                               >
@@ -115,33 +128,33 @@ const UserDashboard = () => {
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                              <StatCard 
-                                    icon={<FaUtensils />} 
-                                    label="Meals Served" 
-                                    value={user.totalMeals} 
-                                    color="emerald" 
-                                    subtext="You've fed 142 people!" 
+                              <StatCard
+                                    icon={<FaUtensils />}
+                                    label="Meals Served"
+                                    value={user.totalMeals}
+                                    color="emerald"
+                                    subtext={`You've fed ${user.totalMeals} people!`}
                               />
-                              <StatCard 
-                                    icon={<FaLeaf />} 
-                                    label="CO₂ Saved" 
-                                    value={user.co2Saved} 
-                                    color="emerald" 
-                                    subtext="Equivalent to 5 trees" 
+                              <StatCard
+                                    icon={<FaLeaf />}
+                                    label="CO₂ Saved"
+                                    value={user.co2Saved}
+                                    color="emerald"
+                                    subtext="Equivalent to 5 trees"
                               />
-                              <StatCard 
-                                    icon={<FaMedal />} 
-                                    label="Impact Points" 
-                                    value={user.points} 
-                                    color="amber" 
-                                    subtext="Top 5% of Donors" 
+                              <StatCard
+                                    icon={<FaMedal />}
+                                    label="Impact Points"
+                                    value={user.points}
+                                    color="amber"
+                                    subtext="Top 5% of Donors"
                               />
-                              <StatCard 
-                                    icon={<FaHistory />} 
-                                    label="Donations" 
-                                    value={activities.length} 
-                                    color="blue" 
-                                    subtext="Total contributions" 
+                              <StatCard
+                                    icon={<FaHistory />}
+                                    label="Donations"
+                                    value={activities.length}
+                                    color="blue"
+                                    subtext="Total contributions"
                               />
                         </div>
 
@@ -171,13 +184,24 @@ const UserDashboard = () => {
                                                       <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl animate-pulse"></div>
                                                       <FaMedal className="w-full h-full text-amber-400 relative z-10" />
                                                 </div>
-                                                <div className="text-2xl font-bold text-amber-400">Gold Donor</div>
-                                                <p className="text-slate-400 text-sm mt-2">
-                                                      You are just <span className="text-white font-bold">8 meals</span> away from Platinum status!
-                                                </p>
-                                                <div className="w-full h-2 bg-slate-700/50 rounded-full mt-4 overflow-hidden">
-                                                      <div className="h-full bg-amber-500 w-[85%] shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
-                                                </div>
+                                                <div className="text-2xl font-bold text-amber-400">{user.level}</div>
+
+                                                {user.nextLevel !== 'Max Level' ? (
+                                                      <>
+                                                            <p className="text-slate-400 text-sm mt-2">
+                                                                  You are just <span className="text-white font-bold">{user.mealsToNext} meals</span> away from {user.nextLevel}!
+                                                            </p>
+                                                            <div className="w-full h-2 bg-slate-700/50 rounded-full mt-4 overflow-hidden">
+                                                                  <motion.div
+                                                                        initial={{ width: 0 }}
+                                                                        animate={{ width: `${user.progress}%` }}
+                                                                        className="h-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                                                                  />
+                                                            </div>
+                                                      </>
+                                                ) : (
+                                                      <p className="text-emerald-400 text-sm mt-2 font-bold">You have reached the highest tier!</p>
+                                                )}
                                           </div>
                                     </div>
 

@@ -13,33 +13,73 @@ async function findBestZone() {
 
 exports.submitFood = async (req, res) => {
       try {
-            const { foodType, quantity, cookingTime, storageCondition } = req.body;
+            const { foodType, category, quantity, cookingTime, expiryDate, storageCondition } = req.body;
+            const User = require('../models/User'); // Lazy import
 
             // 1. Food Safety Rules (Mock)
-            const cookTime = new Date(cookingTime);
-            const hoursDiff = (new Date() - cookTime) / (1000 * 60 * 60);
-
-            if (hoursDiff > 6 && storageCondition !== 'Refrigerated') {
-                  return res.status(400).json({
-                        success: false,
-                        message: 'Food rejected: Too old for non-refrigerated storage.'
-                  });
+            // If cooked, check cooking time
+            if (category === 'cooked' && cookingTime) {
+                  const cookTime = new Date(cookingTime);
+                  const hoursDiff = (new Date() - cookTime) / (1000 * 60 * 60);
+                  if (hoursDiff > 6 && storageCondition !== 'Refrigerated') {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Food rejected: Too old for non-refrigerated storage.'
+                        });
+                  }
+            }
+            // If raw, check expiry
+            if (category === 'raw' && expiryDate) {
+                  const expDate = new Date(expiryDate);
+                  if (expDate < new Date()) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Food rejected: Expired items cannot be donated.'
+                        });
+                  }
             }
 
             // 2. Create Donation
             const donation = new FoodDonation({
                   foodType,
-                  quantity,
+                  category: category || 'cooked',
+                  quantity: parseFloat(quantity),
                   cookingTime,
+                  expiryDate,
                   storageCondition,
                   status: 'Valid'
             });
             await donation.save();
 
-            // 3. Auto-generate Pickup Request (Simulating system matching)
+            // 3. Update User Stats (Default User)
+            const qtyNum = parseFloat(quantity);
+            const user = await User.findOne({ email: 'shahzaman@example.com' });
+            if (user) {
+                  user.kilosDonated += qtyNum;
+                  user.totalMeals += Math.floor(qtyNum * 4);
+                  user.co2Saved += Math.floor(qtyNum * 2.5);
+                  user.points += Math.floor(qtyNum * 10);
+
+                  // Level Up Logic
+                  if (user.points > 5000) user.level = 'Platinum Donor';
+                  else if (user.points > 2000) user.level = 'Gold Donor';
+                  else if (user.points > 500) user.level = 'Silver Donor';
+
+                  await user.save();
+            }
+
+            // 4. Auto-generate Pickup Request (Simulating system matching)
             const targetZone = await findBestZone();
             if (targetZone) {
-                  const urgency = targetZone.hungerScore + (hoursDiff * 2); // Simple heuristic
+                  // Urgency calculation
+                  let urgency = targetZone.hungerScore;
+                  if (cookingTime) {
+                        const hoursDiff = (new Date() - new Date(cookingTime)) / (1000 * 60 * 60);
+                        urgency += (hoursDiff * 2);
+                  } else {
+                        urgency += 5; // Base urgency for raw food
+                  }
+
                   const request = new PickupRequest({
                         foodId: donation._id,
                         zoneId: targetZone._id,
