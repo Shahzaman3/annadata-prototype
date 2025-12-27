@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHeart, FaMapMarkedAlt, FaHandHoldingHeart, FaChartLine, FaBars, FaTimes } from 'react-icons/fa';
+import { FaHeart, FaMapMarkedAlt, FaHandHoldingHeart, FaChartLine, FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
 import { useState } from 'react';
 
 const Navbar = () => {
@@ -13,6 +13,7 @@ const Navbar = () => {
             { path: '/map', label: 'Priority Map', icon: <FaMapMarkedAlt /> },
             { path: '/ngo', label: 'NGO Dashboard', icon: <FaHandHoldingHeart /> },
             { path: '/impact', label: 'Impact', icon: <FaChartLine /> },
+            { path: '/dashboard', label: 'Dashboard', icon: <FaUserCircle /> },
       ];
 
       return (

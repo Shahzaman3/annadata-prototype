@@ -26,8 +26,10 @@ const FoodTypeCard = ({ icon, label, selected, onClick }) => (
 const DonorSubmission = () => {
       const [formData, setFormData] = useState({
             foodType: '',
+            customFoodType: '',
             quantity: '',
             cookingTime: '',
+            expiryDate: '',
             storageCondition: 'Hot'
       });
       const [foodCategory, setFoodCategory] = useState('cooked'); // 'cooked' | 'raw'
@@ -75,19 +77,28 @@ const DonorSubmission = () => {
 
             try {
                   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                  // Prepare payload - only send cookingTime if cooked food
+                  // Prepare payload - only send cookingTime if cooked food, custom type if 'Other'
                   const payload = {
                         ...formData,
+                        foodType: formData.foodType === 'Other' ? formData.customFoodType : formData.foodType,
                         category: foodCategory,
                         cookingTime: foodCategory === 'cooked'
                               ? (formData.cookingTime || new Date().toISOString())
-                              : null
+                              : null,
+                        expiryDate: foodCategory === 'raw' ? formData.expiryDate : null
                   };
 
                   const res = await axios.post(`${API_URL}/api/food/submit`, payload);
                   setStatus('success');
                   setMsg(res.data.message);
-                  setFormData({ foodType: '', quantity: '', cookingTime: '', storageCondition: 'Hot' });
+                  setFormData({
+                        foodType: '',
+                        customFoodType: '',
+                        quantity: '',
+                        cookingTime: '',
+                        expiryDate: '',
+                        storageCondition: 'Hot'
+                  });
                   setFoodCategory('cooked');
                   setImpact(0);
             } catch (err) {
@@ -123,8 +134,8 @@ const DonorSubmission = () => {
                                           type="button"
                                           onClick={() => setFoodCategory('cooked')}
                                           className={`py-3 md:py-4 rounded-xl flex flex-col items-center gap-2 transition-all ${foodCategory === 'cooked'
-                                                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                                                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
                                                 }`}
                                     >
                                           <FaUtensils className="text-xl" />
@@ -134,8 +145,8 @@ const DonorSubmission = () => {
                                           type="button"
                                           onClick={() => setFoodCategory('raw')}
                                           className={`py-3 md:py-4 rounded-xl flex flex-col items-center gap-2 transition-all ${foodCategory === 'raw'
-                                                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                                                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
                                                 }`}
                                     >
                                           <FaLeaf className="text-xl" />
@@ -154,6 +165,7 @@ const DonorSubmission = () => {
                                                       <FoodTypeCard icon={<FaUtensils />} label="Rice & Curry" selected={formData.foodType === 'Rice & Curry'} onClick={() => handleFoodSelect('Rice & Curry')} />
                                                       <FoodTypeCard icon={<FaBreadSlice />} label="Breads" selected={formData.foodType === 'Breads/Roti'} onClick={() => handleFoodSelect('Breads/Roti')} />
                                                       <FoodTypeCard icon={<FaBoxOpen />} label="Packaged" selected={formData.foodType === 'Packaged Goods'} onClick={() => handleFoodSelect('Packaged Goods')} />
+                                                      <FoodTypeCard icon={<FaHandHoldingHeart />} label="Other" selected={formData.foodType === 'Other'} onClick={() => handleFoodSelect('Other')} />
                                                 </>
                                           ) : (
                                                 <>
@@ -161,10 +173,32 @@ const DonorSubmission = () => {
                                                       <FoodTypeCard icon={<FaAppleAlt />} label="Fruits" selected={formData.foodType === 'Fruits'} onClick={() => handleFoodSelect('Fruits')} />
                                                       <FoodTypeCard icon={<FaBoxOpen />} label="Packaged" selected={formData.foodType === 'Packaged Goods'} onClick={() => handleFoodSelect('Packaged Goods')} />
                                                       <FoodTypeCard icon={<FaLeaf />} label="Grains" selected={formData.foodType === 'Grains'} onClick={() => handleFoodSelect('Grains')} />
+                                                      <FoodTypeCard icon={<FaHandHoldingHeart />} label="Other" selected={formData.foodType === 'Other'} onClick={() => handleFoodSelect('Other')} />
                                                 </>
                                           )}
                                     </div>
                                     <input type="hidden" name="foodType" value={formData.foodType} required />
+
+                                    <AnimatePresence>
+                                          {formData.foodType === 'Other' && (
+                                                <motion.div
+                                                      initial={{ opacity: 0, height: 0 }}
+                                                      animate={{ opacity: 1, height: 'auto' }}
+                                                      exit={{ opacity: 0, height: 0 }}
+                                                      className="mt-3 overflow-hidden"
+                                                >
+                                                      <input
+                                                            type="text"
+                                                            name="customFoodType"
+                                                            placeholder="Please specify the food item..."
+                                                            value={formData.customFoodType}
+                                                            onChange={handleChange}
+                                                            className="w-full glass-input"
+                                                            required={formData.foodType === 'Other'}
+                                                      />
+                                                </motion.div>
+                                          )}
+                                    </AnimatePresence>
                               </div>
 
                               {/* Section 2: Quantity & Impact */}
@@ -265,6 +299,43 @@ const DonorSubmission = () => {
                                                                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                                                                   tabIndex={-1}
                                                                   required={foodCategory === 'cooked'}
+                                                            />
+                                                      </div>
+                                                </motion.div>
+                                          )}
+
+                                          {foodCategory === 'raw' && (
+                                                <motion.div
+                                                      initial={{ opacity: 0, height: 0 }}
+                                                      animate={{ opacity: 1, height: 'auto' }}
+                                                      exit={{ opacity: 0, height: 0 }}
+                                                      className="space-y-3 overflow-hidden"
+                                                >
+                                                      <label className="text-sm text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-2">
+                                                            <FaClock /> Expiry Date
+                                                      </label>
+                                                      <div
+                                                            onClick={() => dateInputRef.current?.showPicker()}
+                                                            className="cursor-pointer group relative glass-input flex items-center gap-3 hover:border-emerald-500/50 transition-colors"
+                                                      >
+                                                            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                                                  <FaExclamationCircle />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                  <div className="text-xs text-slate-500 uppercase font-bold">Use By</div>
+                                                                  <div className="text-white font-mono">
+                                                                        {formData.expiryDate ? new Date(formData.expiryDate).toLocaleDateString() : 'Select Expiry Date'}
+                                                                  </div>
+                                                            </div>
+                                                            <input
+                                                                  ref={dateInputRef}
+                                                                  type="date"
+                                                                  name="expiryDate"
+                                                                  value={formData.expiryDate}
+                                                                  onChange={handleChange}
+                                                                  min={new Date().toISOString().split('T')[0]}
+                                                                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                                                                  required={foodCategory === 'raw'}
                                                             />
                                                       </div>
                                                 </motion.div>

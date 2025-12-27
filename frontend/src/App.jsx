@@ -6,6 +6,7 @@ import HungerMap from './pages/HungerMap';
 import NGODashboard from './pages/NGODashboard';
 import ImpactDashboard from './pages/ImpactDashboard';
 import LandingPage from './pages/LandingPage';
+import UserDashboard from './pages/UserDashboard';
 import { AnimatePresence } from 'framer-motion';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/map" element={<HungerMap />} />
           <Route path="/ngo" element={<NGODashboard />} />
           <Route path="/impact" element={<ImpactDashboard />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
         </Routes>
       </AnimatePresence>
     </div>
