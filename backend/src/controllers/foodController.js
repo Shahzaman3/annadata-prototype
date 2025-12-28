@@ -14,6 +14,17 @@ async function findBestZone() {
 exports.submitFood = async (req, res) => {
       try {
             const { foodType, category, quantity, cookingTime, expiryDate, storageCondition } = req.body;
+            // 0. Basic Validation
+            if (!foodType) {
+                  return res.status(400).json({ success: false, message: 'Please select a food type.' });
+            }
+            if (!quantity || parseFloat(quantity) <= 0) {
+                  return res.status(400).json({ success: false, message: 'Please enter a valid quantity.' });
+            }
+            if (!storageCondition) {
+                  return res.status(400).json({ success: false, message: 'Please select a storage condition.' });
+            }
+
             const User = require('../models/User'); // Lazy import
 
             // 1. Food Safety Rules (Mock)

@@ -37,7 +37,8 @@ const DonorSubmission = () => {
       const [status, setStatus] = useState(null); // success | error | loading
       const [msg, setMsg] = useState('');
       const formRef = useRef(null);
-      const dateInputRef = useRef(null);
+      const cookedTimeRef = useRef(null);
+      const expiryDateRef = useRef(null);
 
       useEffect(() => {
             gsap.fromTo(formRef.current,
@@ -58,8 +59,16 @@ const DonorSubmission = () => {
 
       const handleChange = (e) => {
             const { name, value } = e.target;
-            setFormData({ ...formData, [name]: value });
-            if (name === 'quantity') calculateImpact(value);
+
+            if (name === 'quantity') {
+                  // Only allow numbers and one decimal point
+                  if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                        setFormData(prev => ({ ...prev, [name]: value }));
+                        calculateImpact(value);
+                  }
+            } else {
+                  setFormData(prev => ({ ...prev, [name]: value }));
+            }
       };
 
       const handleFoodSelect = (type) => setFormData(prev => ({ ...prev, foodType: type }));
@@ -70,6 +79,15 @@ const DonorSubmission = () => {
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             return now.toISOString().slice(0, 16);
       }
+
+      // Helper to get today's date in YYYY-MM-DD for min attribute (Local Time)
+      const getTodayString = () => {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+      };
 
       const handleSubmit = async (e) => {
             e.preventDefault();
@@ -207,15 +225,15 @@ const DonorSubmission = () => {
                                           <label className="text-sm text-emerald-400 font-semibold uppercase tracking-wider">Quantity (kg)</label>
                                           <div className="relative">
                                                 <input
-                                                      type="number"
+                                                      type="text"
+                                                      inputMode="decimal"
                                                       name="quantity"
                                                       placeholder="0.0"
                                                       value={formData.quantity}
                                                       onChange={handleChange}
                                                       className="w-full glass-input text-2xl font-mono focus:ring-emerald-500/50"
                                                       required
-                                                      min="0.1"
-                                                      step="0.1"
+                                                      autoComplete="off"
                                                 />
                                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">KG</span>
                                           </div>
@@ -263,7 +281,7 @@ const DonorSubmission = () => {
                                                       </label>
                                                       {/* Custom Premium Date Trigger */}
                                                       <div
-                                                            onClick={() => dateInputRef.current?.showPicker()}
+                                                            onClick={() => cookedTimeRef.current?.showPicker()}
                                                             className="cursor-pointer group relative glass-input flex items-center gap-3 hover:border-emerald-500/50 transition-colors"
                                                       >
                                                             <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
@@ -277,7 +295,7 @@ const DonorSubmission = () => {
                                                             </div>
                                                             {/* Hidden Actual Input */}
                                                             <input
-                                                                  ref={dateInputRef}
+                                                                  ref={cookedTimeRef}
                                                                   type="datetime-local"
                                                                   name="cookingTime"
                                                                   value={formData.cookingTime}
@@ -315,7 +333,7 @@ const DonorSubmission = () => {
                                                             <FaClock /> Expiry Date
                                                       </label>
                                                       <div
-                                                            onClick={() => dateInputRef.current?.showPicker()}
+                                                            onClick={() => expiryDateRef.current?.showPicker()}
                                                             className="cursor-pointer group relative glass-input flex items-center gap-3 hover:border-emerald-500/50 transition-colors"
                                                       >
                                                             <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
@@ -328,12 +346,12 @@ const DonorSubmission = () => {
                                                                   </div>
                                                             </div>
                                                             <input
-                                                                  ref={dateInputRef}
+                                                                  ref={expiryDateRef}
                                                                   type="date"
                                                                   name="expiryDate"
                                                                   value={formData.expiryDate}
                                                                   onChange={handleChange}
-                                                                  min={new Date().toISOString().split('T')[0]}
+                                                                  min={getTodayString()}
                                                                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                                                                   required={foodCategory === 'raw'}
                                                             />
@@ -345,7 +363,7 @@ const DonorSubmission = () => {
                                     <div className="space-y-3">
                                           <label className="text-sm text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-2"><FaThermometerHalf /> Storage Condition</label>
                                           <div className="flex bg-black/20 p-1 rounded-lg">
-                                                {['Hot', 'Room Temp', 'Refrigerated'].map((type) => (
+                                                {['Hot', 'Room Temperature', 'Refrigerated'].map((type) => (
                                                       <button
                                                             key={type}
                                                             type="button"
@@ -355,7 +373,7 @@ const DonorSubmission = () => {
                                                                   : 'text-slate-400 hover:text-white'
                                                                   }`}
                                                       >
-                                                            {type}
+                                                            {type === 'Room Temperature' ? 'Room Temp' : type}
                                                       </button>
                                                 ))}
                                           </div>
@@ -402,6 +420,34 @@ const DonorSubmission = () => {
                                                 className="mt-8 text-slate-400 hover:text-white underline text-sm"
                                           >
                                                 Make another donation
+                                          </button>
+                                    </motion.div>
+                              )}
+                        </AnimatePresence>
+
+                        <AnimatePresence>
+                              {status === 'error' && (
+                                    <motion.div
+                                          initial={{ opacity: 0, scale: 0.9 }}
+                                          animate={{ opacity: 1, scale: 1 }}
+                                          exit={{ opacity: 0 }}
+                                          className="absolute inset-0 bg-slate-900/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-8 text-center"
+                                    >
+                                          <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                type="spring"
+                                                className="text-6xl text-red-500 mb-4"
+                                          >
+                                                <FaExclamationCircle />
+                                          </motion.div>
+                                          <h4 className="text-3xl font-bold text-white mb-2">Submission Failed</h4>
+                                          <p className="text-slate-300 mb-6 max-w-md">{msg}</p>
+                                          <button
+                                                onClick={() => setStatus(null)}
+                                                className="px-6 py-3 rounded-xl bg-red-500/20 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white transition-all font-bold uppercase tracking-wider text-sm"
+                                          >
+                                                Try Again
                                           </button>
                                     </motion.div>
                               )}

@@ -69,6 +69,43 @@ const UserDashboard = () => {
       const [activities, setActivities] = useState([]);
       const [loading, setLoading] = useState(true);
 
+      const getTierStyles = (level) => {
+            const l = level?.toLowerCase() || '';
+            if (l.includes('gold')) return {
+                  text: 'text-amber-400',
+                  bg: 'bg-amber-500/20',
+                  border: 'border-amber-500/30',
+                  glow: 'bg-amber-500/20',
+                  progress: 'bg-amber-500',
+                  progressShadow: 'shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+            };
+            if (l.includes('silver')) return {
+                  text: 'text-slate-300',
+                  bg: 'bg-slate-500/20',
+                  border: 'border-slate-500/30',
+                  glow: 'bg-slate-500/20',
+                  progress: 'bg-slate-400',
+                  progressShadow: 'shadow-[0_0_10px_rgba(148,163,184,0.5)]'
+            };
+            if (l.includes('platinum')) return {
+                  text: 'text-purple-400',
+                  bg: 'bg-purple-500/20',
+                  border: 'border-purple-500/30',
+                  glow: 'bg-purple-500/20',
+                  progress: 'bg-purple-500',
+                  progressShadow: 'shadow-[0_0_10px_rgba(168,85,247,0.5)]'
+            };
+            // Default/Starter
+            return {
+                  text: 'text-emerald-400',
+                  bg: 'bg-emerald-500/20',
+                  border: 'border-emerald-500/30',
+                  glow: 'bg-emerald-500/20',
+                  progress: 'bg-emerald-500',
+                  progressShadow: 'shadow-[0_0_10px_rgba(16,185,129,0.5)]'
+            };
+      };
+
       useEffect(() => {
             const fetchDashboardData = async () => {
                   try {
@@ -96,6 +133,7 @@ const UserDashboard = () => {
       }
 
       if (!user) return null; // Or error state
+      const tierStyle = getTierStyles(user.level);
 
       return (
             <div className="min-h-screen pt-28 px-4 pb-12 bg-slate-900 bg-[url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center">
@@ -112,7 +150,7 @@ const UserDashboard = () => {
                                           <h1 className="text-3xl font-bold text-white">Hello, {user.name}</h1>
                                           <div className="flex items-center gap-3 mt-1">
                                                 <span className="text-slate-400 text-sm">{user.email}</span>
-                                                <span className="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                                <span className={`px-2 py-0.5 rounded text-xs font-bold border flex items-center gap-1 ${tierStyle.bg} ${tierStyle.text} ${tierStyle.border}`}>
                                                       <FaMedal /> {user.level}
                                                 </span>
                                           </div>
@@ -177,14 +215,14 @@ const UserDashboard = () => {
 
                               {/* Right Column: Badges & Next Steps (or Notifications) */}
                               <div className="space-y-6">
-                                    <div className="glass-panel p-6 bg-gradient-to-br from-emerald-900/40 to-black border-emerald-500/30">
+                                    <div className={`glass-panel p-6 border transition-colors ${tierStyle.border} ${tierStyle.bg.replace('/20', '/10')}`}>
                                           <h3 className="text-lg font-bold text-white mb-4">Your Impact Level</h3>
                                           <div className="flex flex-col items-center text-center">
                                                 <div className="w-24 h-24 mb-4 relative">
-                                                      <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl animate-pulse"></div>
-                                                      <FaMedal className="w-full h-full text-amber-400 relative z-10" />
+                                                      <div className={`absolute inset-0 rounded-full blur-xl animate-pulse ${tierStyle.glow}`}></div>
+                                                      <FaMedal className={`w-full h-full relative z-10 ${tierStyle.text}`} />
                                                 </div>
-                                                <div className="text-2xl font-bold text-amber-400">{user.level}</div>
+                                                <div className={`text-2xl font-bold ${tierStyle.text}`}>{user.level}</div>
 
                                                 {user.nextLevel !== 'Max Level' ? (
                                                       <>
@@ -195,7 +233,7 @@ const UserDashboard = () => {
                                                                   <motion.div
                                                                         initial={{ width: 0 }}
                                                                         animate={{ width: `${user.progress}%` }}
-                                                                        className="h-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                                                                        className={`h-full ${tierStyle.progress} ${tierStyle.progressShadow}`}
                                                                   />
                                                             </div>
                                                       </>
